@@ -1,16 +1,19 @@
 #include <algorithm.h>
 
-class BestFit: BinPackingAlgorithm {
+class BFD: BinPackingAlgorithm {
 public:
     string name() const override {
-        return "BestFit";
+        return "BFD";
     }
 
     Packing pack(const vector<Item> &items) override {
+        // Sort items in decreasing order
+        vector<Item> sorted_items = items;
+        sort(sorted_items.begin(), sorted_items.end(), greater<Item>());
+        
         Packing packing;
-
         multiset<pair<Item, int>> bins;  // (remaining_capacity, bin_index)
-        for(const Item &item: items) {
+        for(const Item &item: sorted_items) {
             // Find the best fit bin (remaining capacity after placing this item is minimum)
             auto it = bins.lower_bound({item, 0});
 
@@ -33,7 +36,7 @@ public:
                 bins.insert({MaxBinCapacity - item, (int)packing.size() - 1});
             }
         }
-        
+
         return packing;
     }
 };

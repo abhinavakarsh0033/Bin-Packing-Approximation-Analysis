@@ -1,15 +1,18 @@
 #include <algorithm.h>
 
-class FirstFit: BinPackingAlgorithm {
+class FFD: BinPackingAlgorithm {
 public:
     string name() const override {
-        return "FirstFit";
+        return "FFD";
     }
 
     Packing pack(const vector<Item> &items) override {
+        // Sort items in decreasing order
+        vector<Item> sorted_items = items;
+        sort(sorted_items.begin(), sorted_items.end(), greater<Item>());
+        
         Packing packing;
-
-        for(const Item &item: items) {
+        for(const Item &item: sorted_items) {
             bool placed = false;
 
             // Check if the item can fit in any of the existing bins
