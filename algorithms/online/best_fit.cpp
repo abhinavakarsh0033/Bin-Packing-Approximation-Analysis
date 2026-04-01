@@ -1,6 +1,16 @@
-#include <algorithm.h>
+#include "../../common/algorithm.h"
 
-class BestFit: BinPackingAlgorithm {
+// ============================================================================
+// Best Fit Online Algorithm
+// ============================================================================
+// Places each item in the bin with the smallest remaining space that still fits.
+// Uses a multiset for O(log n) lookup of the best fitting bin.
+// Time Complexity: O(n log n)
+// Space Complexity: O(n)
+// Approximation Ratio: 1.7 * OPT + 0.7
+// ============================================================================
+
+class BestFit : public BinPackingAlgorithm {
 public:
     string name() const override {
         return "BestFit";

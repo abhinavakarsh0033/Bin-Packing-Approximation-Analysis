@@ -1,12 +1,24 @@
-#include <algorithm.h>
+#include "../../common/algorithm.h"
 
-class NextFit: BinPackingAlgorithm {
+// ============================================================================
+// Next Fit Online Algorithm
+// ============================================================================
+// The simplest bin packing algorithm - only considers the current bin.
+// If item doesn't fit, closes current bin and opens a new one.
+// Time Complexity: O(n) - single pass
+// Space Complexity: O(1) working memory
+// Approximation Ratio: 2 * OPT (tight bound)
+// ============================================================================
+
+class NextFit : public BinPackingAlgorithm {
 public:
     string name() const override {
         return "NextFit";
     }
 
     Packing pack(const vector<Item> &items) override {
+        if (items.empty()) return {};
+
         Packing packing;
         Bin current_bin;
         Item curr_capacity = MaxBinCapacity;
@@ -18,12 +30,16 @@ public:
                 curr_capacity -= item;
             }
             else {  // Open a new bin
-                packing.push_back(current_bin);
+                if (!current_bin.empty()) {
+                    packing.push_back(current_bin);
+                }
                 current_bin = Bin({item});
                 curr_capacity = MaxBinCapacity - item;
             }
         }
-        packing.push_back(current_bin);
+        if (!current_bin.empty()) {
+            packing.push_back(current_bin);
+        }
         return packing;
     }
 };

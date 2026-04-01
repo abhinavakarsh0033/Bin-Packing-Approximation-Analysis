@@ -1,6 +1,16 @@
-#include <algorithm.h>
+#include "../../common/algorithm.h"
 
-class BFD: BinPackingAlgorithm {
+// ============================================================================
+// Best Fit Decreasing (BFD) Algorithm
+// ============================================================================
+// Offline algorithm that sorts items in decreasing order, then applies Best Fit.
+// Uses a multiset for O(log n) bin lookup.
+// Time Complexity: O(n log n)
+// Space Complexity: O(n)
+// Approximation Ratio: 11/9 * OPT + 6/9 (approximately 1.222 * OPT)
+// ============================================================================
+
+class BFD : public BinPackingAlgorithm {
 public:
     string name() const override {
         return "BFD";

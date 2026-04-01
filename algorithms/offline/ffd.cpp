@@ -1,6 +1,15 @@
-#include <algorithm.h>
+#include "../../common/algorithm.h"
 
-class FFD: BinPackingAlgorithm {
+// ============================================================================
+// First Fit Decreasing (FFD) Algorithm
+// ============================================================================
+// Offline algorithm that sorts items in decreasing order, then applies First Fit.
+// Time Complexity: O(n^2) - O(n log n) for sorting + O(n^2) for placement
+// Space Complexity: O(n)
+// Approximation Ratio: 11/9 * OPT + 6/9 (approximately 1.222 * OPT)
+// ============================================================================
+
+class FFD : public BinPackingAlgorithm {
 public:
     string name() const override {
         return "FFD";

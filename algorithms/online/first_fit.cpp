@@ -1,6 +1,15 @@
-#include <algorithm.h>
+#include "../../common/algorithm.h"
 
-class FirstFit: BinPackingAlgorithm {
+// ============================================================================
+// First Fit Online Algorithm
+// ============================================================================
+// Places each item in the first bin that has enough room.
+// Time Complexity: O(n^2) - linear scan for each item
+// Space Complexity: O(n)
+// Approximation Ratio: 1.7 * OPT + 0.7
+// ============================================================================
+
+class FirstFit : public BinPackingAlgorithm {
 public:
     string name() const override {
         return "FirstFit";
