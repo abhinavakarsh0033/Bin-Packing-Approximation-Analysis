@@ -1,85 +1,128 @@
-============================================================
+======================================================================
 Bin Packing Algorithm Experimental Summary
-============================================================
+======================================================================
 
 OVERALL STATISTICS
-----------------------------------------
-Total experiments: 60000
+--------------------------------------------------
+Total experiments: 60800
 Algorithms tested: NextFit, FirstFit, BestFit, FFD, BFD
-Input sizes: [np.int64(8), np.int64(10), np.int64(11), np.int64(12), np.int64(13), np.int64(14), np.int64(15), np.int64(16), np.int64(17), np.int64(18), np.int64(19), np.int64(20), np.int64(25), np.int64(30), np.int64(40), np.int64(50), np.int64(75), np.int64(100), np.int64(150), np.int64(200), np.int64(300), np.int64(500), np.int64(750), np.int64(1000)]
-Test types: random_uniform, random_normal, adversarial_over_half, adversarial_harmonic, adversarial_mixed
-
-PER-ALGORITHM SUMMARY
-----------------------------------------
-
-NextFit:
-  Avg bins used: 77.66
-  Avg waste: 24.7801
-  Avg runtime: 0.0062 ms
-  Avg approx ratio: 1.0738
-  Max approx ratio: 1.5000
-
-FirstFit:
-  Avg bins used: 69.65
-  Avg waste: 16.7639
-  Avg runtime: 0.0498 ms
-  Avg approx ratio: 1.0228
-  Max approx ratio: 1.4000
-
-BestFit:
-  Avg bins used: 69.20
-  Avg waste: 16.3133
-  Avg runtime: 0.0204 ms
-  Avg approx ratio: 1.0193
-  Max approx ratio: 1.4000
-
-FFD:
-  Avg bins used: 68.11
-  Avg waste: 15.2271
-  Avg runtime: 0.0501 ms
-  Avg approx ratio: 1.0008
-  Max approx ratio: 1.2500
-
-BFD:
-  Avg bins used: 68.11
-  Avg waste: 15.2265
-  Avg runtime: 0.0214 ms
-  Avg approx ratio: 1.0008
-  Max approx ratio: 1.2500
+Input sizes: [np.int64(8), np.int64(10), np.int64(11), np.int64(12), np.int64(13), np.int64(14), np.int64(15), np.int64(16), np.int64(17), np.int64(18), np.int64(19), np.int64(20), np.int64(25), np.int64(30), np.int64(40), np.int64(50), np.int64(60), np.int64(75), np.int64(100), np.int64(120), np.int64(150), np.int64(200), np.int64(249), np.int64(250), np.int64(300), np.int64(500), np.int64(501), np.int64(750), np.int64(1000)]
+Test types: random_uniform, random_normal, adversarial_over_half, adversarial_harmonic, adversarial_mixed, Falkenauer_U, Falkenauer_T
 
 
-APPROXIMATION RATIO ANALYSIS
-----------------------------------------
+RANDOM TESTS
+--------------------------------------------------
 
-NextFit:
-  Mean ratio: 1.0738
-  Std dev: 0.1110
-  Min: 1.0000
-  Max: 1.5000
+  NextFit:
+    Avg bins used: 97.70
+    Avg waste: 26.8940
+    Avg runtime: 0.0061 ms
+    Avg approx ratio: 1.1845
+    Max approx ratio: 1.5000
 
-FirstFit:
-  Mean ratio: 1.0228
-  Std dev: 0.0535
-  Min: 1.0000
-  Max: 1.4000
+  FirstFit:
+    Avg bins used: 77.72
+    Avg waste: 6.9161
+    Avg runtime: 0.0346 ms
+    Avg approx ratio: 1.0570
+    Max approx ratio: 1.4000
 
-BestFit:
-  Mean ratio: 1.0193
-  Std dev: 0.0497
-  Min: 1.0000
-  Max: 1.4000
+  BestFit:
+    Avg bins used: 76.60
+    Avg waste: 5.7895
+    Avg runtime: 0.0217 ms
+    Avg approx ratio: 1.0484
+    Max approx ratio: 1.4000
 
-FFD:
-  Mean ratio: 1.0008
-  Std dev: 0.0121
-  Min: 1.0000
-  Max: 1.2500
+  FFD:
+    Avg bins used: 73.88
+    Avg waste: 3.0740
+    Avg runtime: 0.0332 ms
+    Avg approx ratio: 1.0021
+    Max approx ratio: 1.2500
 
-BFD:
-  Mean ratio: 1.0008
-  Std dev: 0.0121
-  Min: 1.0000
-  Max: 1.2500
+  BFD:
+    Avg bins used: 73.88
+    Avg waste: 3.0726
+    Avg runtime: 0.0215 ms
+    Avg approx ratio: 1.0021
+    Max approx ratio: 1.2500
 
-============================================================
+ADVERSARIAL TESTS
+--------------------------------------------------
+
+  NextFit:
+    Avg bins used: 64.31
+    Avg waste: 23.3708
+    Avg runtime: 0.0039 ms
+    Avg approx ratio: 1.0000
+    Max approx ratio: 1.0000
+
+  FirstFit:
+    Avg bins used: 64.26
+    Avg waste: 23.3292
+    Avg runtime: 0.0354 ms
+    Avg approx ratio: 1.0000
+    Max approx ratio: 1.0000
+
+  BestFit:
+    Avg bins used: 64.26
+    Avg waste: 23.3292
+    Avg runtime: 0.0108 ms
+    Avg approx ratio: 1.0000
+    Max approx ratio: 1.0000
+
+  FFD:
+    Avg bins used: 64.26
+    Avg waste: 23.3292
+    Avg runtime: 0.0366 ms
+    Avg approx ratio: 1.0000
+    Max approx ratio: 1.0000
+
+  BFD:
+    Avg bins used: 64.26
+    Avg waste: 23.3292
+    Avg runtime: 0.0131 ms
+    Avg approx ratio: 1.0000
+    Max approx ratio: 1.0000
+
+BENCHMARK TESTS (Falkenauer)
+--------------------------------------------------
+
+  NextFit:
+    Avg bins used: 169.15
+    Avg waste: 36.6284
+    Avg runtime: 0.0184 ms
+    Avg approx ratio: 1.2379
+    Max approx ratio: 1.3608
+
+  FirstFit:
+    Avg bins used: 141.36
+    Avg waste: 8.8409
+    Avg runtime: 0.0858 ms
+    Avg approx ratio: 1.0723
+    Max approx ratio: 1.1500
+
+  BestFit:
+    Avg bins used: 140.79
+    Avg waste: 8.2659
+    Avg runtime: 0.0525 ms
+    Avg approx ratio: 1.0685
+    Max approx ratio: 1.1500
+
+  FFD:
+    Avg bins used: 139.94
+    Avg waste: 7.4159
+    Avg runtime: 0.0994 ms
+    Avg approx ratio: 1.0820
+    Max approx ratio: 1.2000
+
+  BFD:
+    Avg bins used: 139.91
+    Avg waste: 7.3909
+    Avg runtime: 0.0626 ms
+    Avg approx ratio: 1.0816
+    Max approx ratio: 1.2000
+
+======================================================================
 End of Summary

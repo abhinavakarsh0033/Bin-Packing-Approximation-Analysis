@@ -60,4 +60,9 @@ inline double approximation_ratio(int algo_bins, int optimal_bins) {
     return static_cast<double>(algo_bins) / optimal_bins;
 }
 
+// Helper function to generate random integers in a range [min, max]
+inline int rand_int(int min, int max) {
+    return rand() % (max - min + 1) + min;
+}
+
 #endif // UTILS_H
