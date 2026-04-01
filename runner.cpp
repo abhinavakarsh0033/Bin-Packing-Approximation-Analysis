@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <memory>
 #include <chrono>
+#include <map>
 
 // Include common headers
 #include "common/types.h"
@@ -13,6 +14,7 @@
 #include "testcase_generator/generator.h"
 #include "testcase_generator/random.cpp"
 #include "testcase_generator/adversarial.cpp"
+#include "testcase_generator/falkenauer_parser.cpp"
 
 // Include algorithm implementations from their respective files
 #include "algorithms/online/next_fit.cpp"
@@ -200,6 +202,125 @@ void run_experiments(const string& output_file) {
 }
 
 // ============================================================================
+// Falkenauer Benchmark Experiments
+// ============================================================================
+
+void run_falkenauer_benchmarks(const string& benchmark_dir, const string& output_file) {
+    // Create algorithms
+    vector<unique_ptr<BinPackingAlgorithm>> approx_algorithms;
+    approx_algorithms.push_back(make_unique<NextFit>());
+    approx_algorithms.push_back(make_unique<FirstFit>());
+    approx_algorithms.push_back(make_unique<BestFit>());
+    approx_algorithms.push_back(make_unique<FFD>());
+    approx_algorithms.push_back(make_unique<BFD>());
+
+    // Results storage
+    vector<ExperimentResult> results;
+
+    cout << "=== Running Falkenauer Benchmarks ===\n";
+    cout << "Loading instances from: " << benchmark_dir << "\n\n";
+
+    // Parse all benchmark files
+    vector<FalkenauerInstance> instances = FalkenauerParser::parse_all(benchmark_dir);
+    
+    cout << "Loaded " << instances.size() << " benchmark instances\n\n";
+
+    // Separate U and T class instances
+    vector<FalkenauerInstance> u_class, t_class;
+    for (const auto& inst : instances) {
+        if (inst.instance_class == "U") {
+            u_class.push_back(inst);
+        } else {
+            t_class.push_back(inst);
+        }
+    }
+
+    cout << "  U-class instances (Uniform): " << u_class.size() << "\n";
+    cout << "  T-class instances (Triplet): " << t_class.size() << "\n\n";
+
+    int test_id = 0;
+    int total_tests = instances.size();
+
+    // Run on U-class instances
+    cout << "--- U-class Instances ---\n";
+    for (const auto& instance : u_class) {
+        test_id++;
+        TestCase test = FalkenauerParser::to_test_case(instance);
+        
+        cout << "Test " << test_id << "/" << total_tests 
+             << ": " << instance.name 
+             << " (n=" << instance.num_items 
+             << ", OPT=" << instance.optimal_bins << ")\n";
+
+        // Run all approximation algorithms
+        for (auto& algo : approx_algorithms) {
+            ExperimentResult res = run_algorithm(algo.get(), test, instance.optimal_bins);
+            results.push_back(res);
+        }
+    }
+
+    // Run on T-class instances
+    cout << "\n--- T-class Instances ---\n";
+    for (const auto& instance : t_class) {
+        test_id++;
+        TestCase test = FalkenauerParser::to_test_case(instance);
+        
+        cout << "Test " << test_id << "/" << total_tests 
+             << ": " << instance.name 
+             << " (n=" << instance.num_items 
+             << ", OPT=" << instance.optimal_bins << ")\n";
+
+        // Run all approximation algorithms
+        for (auto& algo : approx_algorithms) {
+            ExperimentResult res = run_algorithm(algo.get(), test, instance.optimal_bins);
+            results.push_back(res);
+        }
+    }
+
+    // Write results to CSV
+    ofstream csv(output_file);
+    csv << "algorithm,n,test_type,bins_used,waste,runtime_ms,approx_ratio\n";
+    for (const auto& res : results) {
+        res.print_csv(csv);
+    }
+    csv.close();
+
+    // Print summary statistics
+    cout << "\n=== Falkenauer Benchmark Summary ===\n";
+    
+    // Calculate average approximation ratios per algorithm per class
+    map<string, vector<double>> u_ratios, t_ratios;
+    for (const auto& res : results) {
+        if (res.test_type == "Falkenauer_U") {
+            u_ratios[res.algorithm].push_back(res.approx_ratio);
+        } else {
+            t_ratios[res.algorithm].push_back(res.approx_ratio);
+        }
+    }
+
+    cout << "\nAverage Approximation Ratios:\n";
+    cout << "Algorithm       | U-class  | T-class\n";
+    cout << "----------------|----------|--------\n";
+    
+    vector<string> algo_names = {"NextFit", "FirstFit", "BestFit", "FFD", "BFD"};
+    for (const string& algo : algo_names) {
+        double u_avg = 0.0, t_avg = 0.0;
+        if (!u_ratios[algo].empty()) {
+            u_avg = accumulate(u_ratios[algo].begin(), u_ratios[algo].end(), 0.0) / u_ratios[algo].size();
+        }
+        if (!t_ratios[algo].empty()) {
+            t_avg = accumulate(t_ratios[algo].begin(), t_ratios[algo].end(), 0.0) / t_ratios[algo].size();
+        }
+        cout << setw(15) << left << algo << " | " 
+             << fixed << setprecision(4) << setw(8) << u_avg << " | "
+             << fixed << setprecision(4) << t_avg << "\n";
+    }
+
+    cout << "\nResults saved to: " << output_file << "\n";
+    cout << "Total results: " << results.size() << "\n";
+}
+
+// ============================================================================
 // Main Entry Point
 // ============================================================================
 
@@ -215,11 +336,41 @@ int main(int argc, char* argv[]) {
     cout << "================================================================\n";
     cout << "  Algorithms: NextFit, FirstFit, BestFit, FFD, BFD             \n";
     cout << "  Optimal: BruteForce, BitmaskDP (small N only)                \n";
-    cout << "  Test Types: Random (Uniform, Normal), Adversarial            \n";
+    cout << "  Test Types: Random (Uniform, Normal), Adversarial, Falkenauer\n";
     cout << "================================================================\n\n";
 
     try {
-        run_experiments(output_file);
+        // Check for benchmark mode
+        bool run_benchmark = false;
+        string benchmark_dir = "falkenauer_benchmark";
+        string benchmark_output = "falkenauer_results.csv";
+        
+        for (int i = 1; i < argc; ++i) {
+            string arg = argv[i];
+            if (arg == "--falkenauer" || arg == "-f") {
+                run_benchmark = true;
+            } else if (arg == "--benchmark-dir" && i + 1 < argc) {
+                benchmark_dir = argv[++i];
+            } else if (arg == "--benchmark-output" && i + 1 < argc) {
+                benchmark_output = argv[++i];
+            } else if (arg == "--help" || arg == "-h") {
+                cout << "Usage: runner [options]\n";
+                cout << "Options:\n";
+                cout << "  --falkenauer, -f       Run Falkenauer benchmark tests\n";
+                cout << "  --benchmark-dir DIR    Benchmark directory (default: falkenauer_benchmark)\n";
+                cout << "  --benchmark-output FILE Output file for benchmark (default: falkenauer_results.csv)\n";
+                cout << "  OUTPUT_FILE            Output file for random tests (default: results.csv)\n";
+                return 0;
+            } else if (arg[0] != '-') {
+                output_file = arg;
+            }
+        }
+
+        if (run_benchmark) {
+            run_falkenauer_benchmarks(benchmark_dir, benchmark_output);
+        } else {
+            run_experiments(output_file);
+        }
     } catch (const exception& e) {
         cerr << "Error: " << e.what() << endl;
         return 1;
