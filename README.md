@@ -169,13 +169,3 @@ public:
 ### Adding Test Cases
 
 Add methods to `TestCaseGenerator` in `generator.h` or extend `RandomGenerator`/`AdversarialGenerator`.
-
-## License
-
-MIT License
-
-## References
-
-- Johnson, D. S. (1973). Near-optimal bin packing algorithms.
-- Garey, M. R., & Johnson, D. S. (1979). Computers and Intractability.
-- Coffman Jr, E. G., Garey, M. R., & Johnson, D. S. (1996). Approximation algorithms for bin packing.
